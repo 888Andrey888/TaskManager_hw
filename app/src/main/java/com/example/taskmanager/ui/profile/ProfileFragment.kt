@@ -1,8 +1,12 @@
 package com.example.taskmanager.ui.profile
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
+import android.provider.ContactsContract.Contacts.Photo
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +15,9 @@ import com.example.taskmanager.R
 import com.example.taskmanager.data.local.Pref
 import com.example.taskmanager.databinding.FragmentProfileBinding
 import com.example.taskmanager.utils.AppTextWatcher
+import com.example.taskmanager.utils.loadImage
+import com.theartofdev.edmodo.cropper.CropImage
+import com.theartofdev.edmodo.cropper.CropImageView
 
 class ProfileFragment : Fragment() {
     private lateinit var binding: FragmentProfileBinding
@@ -29,8 +36,33 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.etSetName.setText(pref.getName())
-        binding.etSetName.addTextChangedListener(AppTextWatcher{
+        if(pref.getImage()?.length!! > 0){
+            pref.getImage()?.let { binding.imgPhotoSettings.loadImage(it) }
+        }
+
+        binding.etSetName.addTextChangedListener(AppTextWatcher {
             pref.setName(binding.etSetName.text.toString())
         })
+        binding.imgPhotoSettings.setOnClickListener {
+            changePhoto()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+    }
+
+    private fun changePhoto() {
+        CropImage.activity().setAspectRatio(1, 1).setRequestedSize(600, 600)
+            .setCropShape(CropImageView.CropShape.OVAL).start(requireActivity(), this)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null){
+            val resultUri = CropImage.getActivityResult(data).uri
+            pref.setImage(resultUri.toString())
+            pref.getImage()?.let { binding.imgPhotoSettings.loadImage(it) }
+        }
     }
 }
