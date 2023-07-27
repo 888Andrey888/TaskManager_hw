@@ -3,15 +3,10 @@ package com.example.taskmanager.ui.profile
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.provider.ContactsContract.Contacts.Photo
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.taskmanager.R
+import androidx.fragment.app.Fragment
 import com.example.taskmanager.data.local.Pref
 import com.example.taskmanager.databinding.FragmentProfileBinding
 import com.example.taskmanager.utils.AppTextWatcher
@@ -25,6 +20,15 @@ class ProfileFragment : Fragment() {
         Pref(requireContext())
     }
 
+    /*private val cropImage = registerForActivityResult(CropImageContract()) {
+        if (it.isSuccessful) {
+            val uriContent = it.uriContent
+            val uriFilePath = it.getUriFilePath(requireContext())
+        } else {
+            Toast.makeText(requireActivity(), it.error.toString(), Toast.LENGTH_SHORT).show()
+        }
+    }*/
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -36,7 +40,7 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.etSetName.setText(pref.getName())
-        if(pref.getImage()?.length!! > 0){
+        if (pref.getImage()?.length!! > 0) {
             pref.getImage()?.let { binding.imgPhotoSettings.loadImage(it) }
         }
 
@@ -59,7 +63,7 @@ class ProfileFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null){
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
             val resultUri = CropImage.getActivityResult(data).uri
             pref.setImage(resultUri.toString())
             pref.getImage()?.let { binding.imgPhotoSettings.loadImage(it) }

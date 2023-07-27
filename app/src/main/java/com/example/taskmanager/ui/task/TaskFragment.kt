@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
+import com.example.taskmanager.App
 import com.example.taskmanager.databinding.FragmentTaskBinding
 import com.example.taskmanager.model.Task
 
@@ -29,7 +30,7 @@ class TaskFragment : Fragment() {
                 title = binding.etTitle.text.toString(),
                 descriptor = binding.etDesc.text.toString()
             )
-            setFragmentResult(RESULT_REQUEST_KEY, bundleOf(RESULT_KEY to task))
+            App.db.taskDao().insert(task)
             findNavController().navigateUp()
         }
     }
