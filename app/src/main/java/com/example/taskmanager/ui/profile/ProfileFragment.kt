@@ -8,14 +8,15 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.taskmanager.data.local.Pref
 import com.example.taskmanager.databinding.FragmentProfileBinding
-import com.example.taskmanager.utils.AppTextWatcher
 import com.example.taskmanager.utils.loadImage
 import com.github.dhaval2404.imagepicker.ImagePicker
 
 class ProfileFragment : Fragment() {
+
     private lateinit var binding: FragmentProfileBinding
     private val pref: Pref by lazy {
         Pref(requireContext())
@@ -32,9 +33,12 @@ class ProfileFragment : Fragment() {
                     pref.setImage(fileUri.toString())
                     pref.getImage()?.let { binding.imgPhotoSettings.loadImage(it) }
                 }
+
                 ImagePicker.RESULT_ERROR -> {
-                    Toast.makeText(requireContext(), ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), ImagePicker.getError(data), Toast.LENGTH_SHORT)
+                        .show()
                 }
+
                 else -> {
                     Toast.makeText(requireContext(), "Task Cancelled", Toast.LENGTH_SHORT).show()
                 }
@@ -53,13 +57,12 @@ class ProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.etSetName.setText(pref.getName())
 
-        if (pref.getImage()?.length!! > 0) {
-            pref.getImage()?.let { binding.imgPhotoSettings.loadImage(it) }
+        if (pref.getImage()?.isNotEmpty() == true) {
+            binding.imgPhotoSettings.loadImage(pref.getImage()!!)
         }
 
-        binding.etSetName.addTextChangedListener(AppTextWatcher {
-            pref.setName(binding.etSetName.text.toString())
-        })
+        binding.etSetName.addTextChangedListener { pref.setName(binding.etSetName.text.toString()) }
+
         binding.imgPhotoSettings.setOnClickListener {
             changePhoto()
         }

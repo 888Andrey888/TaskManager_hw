@@ -9,11 +9,15 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
 import com.example.taskmanager.App
+import com.example.taskmanager.R
 import com.example.taskmanager.databinding.FragmentTaskBinding
 import com.example.taskmanager.model.Task
+import com.example.taskmanager.ui.home.HomeFragment.Companion.TASK_KEY
 
 class TaskFragment : Fragment() {
+
     private lateinit var binding: FragmentTaskBinding
+    private var task: Task? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -23,20 +27,37 @@ class TaskFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) = with(binding) {
         super.onViewCreated(view, savedInstanceState)
-        binding.btnAddTask.setOnClickListener {
-            val task = Task(
-                title = binding.etTitle.text.toString(),
-                descriptor = binding.etDesc.text.toString()
-            )
-            App.db.taskDao().insert(task)
+        task = arguments?.getSerializable(TASK_KEY) as Task?
+
+        if (task != null) {
+            etTitle.setText(task?.title)
+            etDesc.setText(task?.descriptor)
+            btnAddTask.text = getString(R.string.update)
+        }
+        btnAddTask.setOnClickListener {
+            if (task == null)
+                insertTaskInDb()
+            else
+                updateTaskInDb()
             findNavController().navigateUp()
         }
     }
 
-    companion object{
-        const val RESULT_REQUEST_KEY = "request.key"
-        const val RESULT_KEY = "result.key"
+    private fun updateTaskInDb() {
+        val data = task?.copy(
+            title = binding.etTitle.text.toString(),
+            descriptor = binding.etDesc.text.toString()
+        )
+        data?.let { App.db.taskDao().update(it) }
+    }
+
+    private fun insertTaskInDb() {
+        val task = Task(
+            title = binding.etTitle.text.toString(),
+            descriptor = binding.etDesc.text.toString()
+        )
+        App.db.taskDao().insert(task)
     }
 }

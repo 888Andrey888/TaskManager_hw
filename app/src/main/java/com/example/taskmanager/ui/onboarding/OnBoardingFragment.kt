@@ -12,6 +12,7 @@ import com.example.taskmanager.databinding.FragmentOnBoardingBinding
 import com.example.taskmanager.ui.onboarding.adapter.OnBoardingAdapter
 
 class OnBoardingFragment : Fragment() {
+
     private lateinit var binding: FragmentOnBoardingBinding
     private val adapter = OnBoardingAdapter(this::onClick)
     private val pref: Pref by lazy {
@@ -32,7 +33,7 @@ class OnBoardingFragment : Fragment() {
         binding.indicator.setViewPager(binding.viewpager)
     }
 
-    private fun onClick(){
+    private fun onClick() {
         pref.onBoardingShowed()
         findNavController().navigateUp()
     }

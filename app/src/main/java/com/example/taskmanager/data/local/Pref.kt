@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Context.MODE_PRIVATE
 
 class Pref(private val context: Context) {
+
     private val pref = context.getSharedPreferences(PREF_NAME, MODE_PRIVATE)
     fun isOnBoardingShowed(): Boolean {
         return pref.getBoolean(SHOWED_KEY, false)
@@ -17,11 +18,11 @@ class Pref(private val context: Context) {
         return pref.getString(PREF_IMG, "")
     }
 
-    fun setImage(url: String){
+    fun setImage(url: String) {
         pref.edit().putString(PREF_IMG, url).apply()
     }
 
-    fun setName(name: String){
+    fun setName(name: String) {
         pref.edit().putString(PREF_NAME, name).apply()
     }
 

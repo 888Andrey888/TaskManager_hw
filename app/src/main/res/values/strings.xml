@@ -7,4 +7,10 @@
     <string name="title">Title</string>
     <string name="add_task">Add Task</string>
     <string name="profile">Profile</string>
+    <string name="delete">Delete</string>
+    <string name="delete_message">Delete this task?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="update">Update</string>
+    <string name="description">Description</string>
 </resources>
