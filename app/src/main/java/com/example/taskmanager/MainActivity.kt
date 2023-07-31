@@ -1,6 +1,7 @@
 package com.example.taskmanager
 
 import android.os.Bundle
+import android.view.MenuItem
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -31,8 +32,6 @@ class MainActivity : AppCompatActivity() {
         if (!pref.isOnBoardingShowed())
             navController.navigate(R.id.onBoardingFragment)
 
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.navigation_home,
@@ -54,5 +53,12 @@ class MainActivity : AppCompatActivity() {
                 supportActionBar?.show()
             }
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> findNavController(R.id.nav_host_fragment_activity_main).navigateUp()
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

@@ -9,10 +9,14 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
 import com.example.taskmanager.App
+import com.example.taskmanager.MainActivity
 import com.example.taskmanager.R
 import com.example.taskmanager.databinding.FragmentTaskBinding
 import com.example.taskmanager.model.Task
 import com.example.taskmanager.ui.home.HomeFragment.Companion.TASK_KEY
+import com.example.taskmanager.utils.EditTextEmptyLineException
+import com.example.taskmanager.utils.checkingForEmptyLine
+import com.example.taskmanager.utils.showToast
 
 class TaskFragment : Fragment() {
 
@@ -37,17 +41,26 @@ class TaskFragment : Fragment() {
             btnAddTask.text = getString(R.string.update)
         }
         btnAddTask.setOnClickListener {
-            if (task == null)
-                insertTaskInDb()
-            else
-                updateTaskInDb()
-            findNavController().navigateUp()
+            try {
+                if (task == null)
+                    insertTaskInDb()
+                else
+                    updateTaskInDb()
+                findNavController().navigateUp()
+            } catch (e: EditTextEmptyLineException) {
+                showToast(e.message.toString(), activity as MainActivity)
+            }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     private fun updateTaskInDb() {
         val data = task?.copy(
-            title = binding.etTitle.text.toString(),
+            title = binding.etTitle.checkingForEmptyLine(),
             descriptor = binding.etDesc.text.toString()
         )
         data?.let { App.db.taskDao().update(it) }
@@ -55,9 +68,14 @@ class TaskFragment : Fragment() {
 
     private fun insertTaskInDb() {
         val task = Task(
-            title = binding.etTitle.text.toString(),
+            title = binding.etTitle.checkingForEmptyLine(),
             descriptor = binding.etDesc.text.toString()
         )
         App.db.taskDao().insert(task)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
     }
 }

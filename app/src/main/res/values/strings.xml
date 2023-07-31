@@ -13,4 +13,9 @@
     <string name="no">No</string>
     <string name="update">Update</string>
     <string name="description">Description</string>
+    <string name="skip">Skip</string>
+    <string name="title_on_boarding">Title</string>
+    <string name="description_on_boarding">Description</string>
+    <string name="get_started">Get Started</string>
+    <string name="name_profile">Name</string>
 </resources>
