@@ -19,6 +19,6 @@ fun EditText.checkingForEmptyLine(): String{
     if (this.text.isNotEmpty()){
         return this.text.toString()
     }else{
-        throw EditTextEmptyLineException("Title field must not be empty")
+        throw EditTextEmptyLineException("This field must not be empty")
     }
 }

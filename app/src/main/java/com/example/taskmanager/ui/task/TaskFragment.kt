@@ -48,7 +48,8 @@ class TaskFragment : Fragment() {
                     updateTaskInDb()
                 findNavController().navigateUp()
             } catch (e: EditTextEmptyLineException) {
-                showToast(e.message.toString(), activity as MainActivity)
+                binding.etTitle.requestFocus()
+                binding.etTitle.error = e.message
             }
         }
     }
