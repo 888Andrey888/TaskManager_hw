@@ -1,12 +1,10 @@
 package com.example.taskmanager.ui.task
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
-import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.taskmanager.App
 import com.example.taskmanager.MainActivity
@@ -16,7 +14,6 @@ import com.example.taskmanager.model.Task
 import com.example.taskmanager.ui.home.HomeFragment.Companion.TASK_KEY
 import com.example.taskmanager.utils.EditTextEmptyLineException
 import com.example.taskmanager.utils.checkingForEmptyLine
-import com.example.taskmanager.utils.showToast
 
 class TaskFragment : Fragment() {
 
@@ -31,15 +28,23 @@ class TaskFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) = with(binding) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         task = arguments?.getSerializable(TASK_KEY) as Task?
 
+        initFields()
+        initListener()
+    }
+
+    private fun initFields() = with(binding) {
         if (task != null) {
             etTitle.setText(task?.title)
             etDesc.setText(task?.descriptor)
             btnAddTask.text = getString(R.string.update)
         }
+    }
+
+    private fun initListener() = with(binding) {
         btnAddTask.setOnClickListener {
             try {
                 if (task == null)
@@ -48,8 +53,8 @@ class TaskFragment : Fragment() {
                     updateTaskInDb()
                 findNavController().navigateUp()
             } catch (e: EditTextEmptyLineException) {
-                binding.etTitle.requestFocus()
-                binding.etTitle.error = e.message
+                etTitle.requestFocus()
+                etTitle.error = e.message
             }
         }
     }
