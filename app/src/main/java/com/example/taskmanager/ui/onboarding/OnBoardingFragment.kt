@@ -35,6 +35,6 @@ class OnBoardingFragment : Fragment() {
 
     private fun onClick() {
         pref.onBoardingShowed()
-        findNavController().navigateUp()
+        findNavController().navigate(R.id.navigation_home)
     }
 }

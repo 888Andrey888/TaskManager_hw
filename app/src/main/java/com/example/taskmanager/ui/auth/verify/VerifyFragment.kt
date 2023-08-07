@@ -1,12 +1,13 @@
 package com.example.taskmanager.ui.auth.verify
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.taskmanager.R
+import com.example.taskmanager.data.local.Pref
 import com.example.taskmanager.databinding.FragmentVerifyBinding
 import com.example.taskmanager.ui.auth.phone.PhoneFragment.Companion.VERIFY_KEY
 import com.example.taskmanager.utils.showToast
@@ -16,9 +17,12 @@ import com.google.firebase.auth.PhoneAuthProvider
 
 class VerifyFragment : Fragment() {
 
-    private lateinit var binding:FragmentVerifyBinding
+    private lateinit var binding: FragmentVerifyBinding
     private val auth: FirebaseAuth by lazy {
         FirebaseAuth.getInstance()
+    }
+    private val pref: Pref by lazy {
+        Pref(requireContext())
     }
 
     override fun onCreateView(
@@ -34,14 +38,18 @@ class VerifyFragment : Fragment() {
         val verId = arguments?.getString(VERIFY_KEY)
 
         binding.btnAccept.setOnClickListener {
-            val credential = PhoneAuthProvider.getCredential(verId!!, binding.etCode.text.toString())
+            val credential =
+                PhoneAuthProvider.getCredential(verId!!, binding.etCode.text.toString())
             signInWithPhoneAuthCredential(credential)
         }
     }
 
-    private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential){
+    private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
         auth.signInWithCredential(credential).addOnCompleteListener {
-            findNavController().navigate(R.id.navigation_home)
+            if (!pref.isOnBoardingShowed()) {
+                findNavController().navigate(R.id.onBoardingFragment)
+            } else
+                findNavController().navigate(R.id.navigation_home)
         }.addOnFailureListener {
             showToast(getString(R.string.error_any), requireActivity())
         }

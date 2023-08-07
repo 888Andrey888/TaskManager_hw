@@ -1,10 +1,9 @@
 package com.example.taskmanager
 
 import android.os.Bundle
-import android.view.Menu
+import android.view.KeyEvent
 import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.navigation.NavController
@@ -14,16 +13,13 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.taskmanager.data.local.Pref
 import com.example.taskmanager.databinding.ActivityMainBinding
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.ktx.Firebase
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
-    private val pref: Pref by lazy {
-        Pref(this)
-    }
 
     private val auth: FirebaseAuth by lazy {
         FirebaseAuth.getInstance()
@@ -39,13 +35,6 @@ class MainActivity : AppCompatActivity() {
         val navView: BottomNavigationView = binding.navView
 
         navController = findNavController(R.id.nav_host_fragment_activity_main)
-
-        if (!pref.isOnBoardingShowed())
-            navController.navigate(R.id.onBoardingFragment)
-
-        if (FirebaseAuth.getInstance().currentUser?.uid == null) {
-            navController.navigate(R.id.authFragment)
-        }
 
         val appBarConfiguration = AppBarConfiguration(
             setOf(
@@ -76,6 +65,29 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (FirebaseAuth.getInstance().currentUser?.uid == null) {
+            navController.navigate(R.id.authFragment)
+        }
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        val fragmentsWithKeyBackToExit = setOf(
+            R.id.authFragment,
+            R.id.onBoardingFragment,
+            R.id.navigation_home
+        )
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            if (fragmentsWithKeyBackToExit.contains(destination.id)) {
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    finish()
+                }
+            }
+        }
+        return super.onKeyDown(keyCode, event)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> findNavController(R.id.nav_host_fragment_activity_main).navigateUp()
@@ -88,7 +100,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun showAlertDialogExit() {
         val alertDialog = AlertDialog.Builder(this)
-        alertDialog.setTitle(getString(R.string.menu_exit)).setMessage(getString(R.string.menu_exit_message)).setCancelable(true)
+        alertDialog.setTitle(getString(R.string.menu_exit))
+            .setMessage(getString(R.string.menu_exit_message)).setCancelable(true)
             .setPositiveButton(getString(R.string.yes)) { _, _ ->
                 auth.signOut()
                 navController.navigate(R.id.authFragment)

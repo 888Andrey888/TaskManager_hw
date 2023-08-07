@@ -30,6 +30,10 @@ class Pref(private val context: Context) {
         pref.edit().putBoolean(SHOWED_KEY, true).apply()
     }
 
+    fun onBoardingShow() {
+        pref.edit().putBoolean(SHOWED_KEY, false).apply()
+    }
+
     companion object {
         const val PREF_NAME = "pref.name"
         const val SHOWED_KEY = "seen.key"
