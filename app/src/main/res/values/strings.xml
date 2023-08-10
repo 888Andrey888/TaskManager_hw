@@ -29,4 +29,7 @@
     <string name="phone">phone</string>
     <string name="menu_exit">Exit</string>
     <string name="menu_exit_message">Are you sure you want to exit</string>
+    <string name="brand">Brand</string>
+    <string name="model">Model</string>
+    <string name="save">Save</string>
 </resources>
